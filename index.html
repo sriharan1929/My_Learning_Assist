@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Learning OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-container">
+  <div class="login-card">
+    <div class="login-mark">LOS</div>
+    <h1>My Learning OS</h1>
+    <p class="login-sub">Your shelf for notes, roadmaps &amp; progress.</p>
+    <input id="username" type="text" placeholder="Username" autocomplete="username">
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <button onclick="login()">Sign in</button>
+    <p id="login-error"></p>
+  </div>
+</div>
+
+<!-- APPLICATION -->
+<div id="app-container" style="display:none;">
+
+  <aside id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">TMS</span>
+      <span class="brand-name">Learning with TMS</span>
+    </div>
+    <nav id="sideNav">
+      <button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')"><span class="nav-dot dot-dash"></span>Dashboard</button>
+      <button class="nav-item" data-view="notes" onclick="switchView('notes')"><span class="nav-dot dot-notes"></span>Notes</button>
+      <button class="nav-item" data-view="roadmaps" onclick="switchView('roadmaps')"><span class="nav-dot dot-roadmaps"></span>Roadmaps</button>
+      <button class="nav-item" data-view="checklists" onclick="switchView('checklists')"><span class="nav-dot dot-checklists"></span>Checklists</button>
+      <button class="nav-item" data-view="topics" onclick="switchView('topics')"><span class="nav-dot dot-topics"></span>Topics to Learn</button>
+      <button class="nav-item" data-view="remember" onclick="switchView('remember')"><span class="nav-dot dot-remember"></span>Questions to Remember</button>
+      <button class="nav-item" data-view="diary" onclick="switchView('diary')"><span class="nav-dot dot-diary"></span>Diary</button>
+      <button class="nav-item" data-view="tasks" onclick="switchView('tasks')"><span class="nav-dot dot-tasks"></span>Tasks</button>
+      <button class="nav-item" data-view="goals" onclick="switchView('goals')"><span class="nav-dot dot-goals"></span>Progress</button>
+      <button class="nav-item" data-view="custom" onclick="switchView('custom')"><span class="nav-dot dot-custom"></span>Custom Modules</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="darkToggle" onclick="toggleDarkMode()">🌙 Dark mode</button>
+      <button onclick="logout()">Log out</button>
+    </div>
+  </aside>
+
+  <div id="main-area">
+
+    <header>
+      <div class="search-wrap">
+        <input id="globalSearch" type="text" placeholder="Search everything..." oninput="globalSearch()">
+        <div id="searchResults" class="search-results"></div>
+      </div>
+      <div class="header-meta">
+        <span id="syncStatus" class="sync-status">Saved locally</span>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view active">
+        <div class="view-head">
+          <h1>Dashboard</h1>
+          <p class="view-sub">A bird's-eye view of your whole learning system.</p>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-card"><h3>Total Modules</h3><span id="moduleCount">0</span></div>
+          <div class="stat-card"><h3>Total Items</h3><span id="itemCount">0</span></div>
+          <div class="stat-card"><h3>Completed</h3><span id="completedCount">0</span></div>
+          <div class="stat-card accent"><h3>Overall Progress</h3><span id="overallProgress">0%</span></div>
+        </div>
+
+        <div class="dash-grid">
+          <section class="card">
+            <h2>Activity Timeline</h2>
+            <div id="activityTimeline" class="timeline-container"></div>
+          </section>
+
+          <section class="card">
+            <h2>Upcoming Tasks</h2>
+            <div id="upcomingTasks"></div>
+          </section>
+
+          <section class="card">
+            <h2>Recent Notes</h2>
+            <div id="recentNotes"></div>
+          </section>
+
+          <section class="card">
+            <h2>Module Snapshot</h2>
+            <div id="moduleSnapshot" class="snapshot-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- NOTES -->
+      <section id="view-notes" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Notes</h1>
+            <p class="view-sub">Capture ideas, references and write-ups.</p>
+          </div>
+          <button class="btn-primary" onclick="openNoteModal()">+ New Note</button>
+        </div>
+        <div id="notesList" class="card-grid"></div>
+      </section>
+
+      <!-- ROADMAPS -->
+      <section id="view-roadmaps" class="view">
+        <div id="roadmapsList-wrap">
+          <div class="view-head">
+            <div>
+              <h1>Roadmaps</h1>
+              <p class="view-sub">Plan multi-step learning paths and track milestones.</p>
+            </div>
+            <button class="btn-primary" onclick="openRoadmapModal()">+ New Roadmap</button>
+          </div>
+          <div id="roadmapsList" class="card-grid"></div>
+        </div>
+        <div id="roadmapDetail" class="detail-view" style="display:none;"></div>
+      </section>
+
+      <!-- CHECKLISTS -->
+      <section id="view-checklists" class="view">
+        <div id="checklistsList-wrap">
+          <div class="view-head">
+            <div>
+              <h1>Checklists</h1>
+              <p class="view-sub">Track repeatable lists and one-off prep work.</p>
+            </div>
+            <button class="btn-primary" onclick="openChecklistModal()">+ New Checklist</button>
+          </div>
+          <div id="checklistsList" class="card-grid"></div>
+        </div>
+        <div id="checklistDetail" class="detail-view" style="display:none;"></div>
+      </section>
+
+      <!-- TOPICS TO LEARN -->
+      <section id="view-topics" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Topics to Learn</h1>
+            <p class="view-sub">Your learning backlog, organized by status.</p>
+          </div>
+          <button class="btn-primary" onclick="openTopicModal()">+ New Topic</button>
+        </div>
+        <div class="board" id="topicsBoard">
+          <div class="board-col" data-status="Not Started"><h3>Not Started</h3><div class="board-list" id="topics-Not-Started"></div></div>
+          <div class="board-col" data-status="Learning"><h3>Learning</h3><div class="board-list" id="topics-Learning"></div></div>
+          <div class="board-col" data-status="Mastered"><h3>Mastered</h3><div class="board-list" id="topics-Mastered"></div></div>
+        </div>
+      </section>
+
+      <!-- QUESTIONS TO REMEMBER -->
+      <section id="view-remember" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Questions to Remember</h1>
+            <p class="view-sub">Flashcards for things worth not forgetting. Click a card to flip.</p>
+          </div>
+          <button class="btn-primary" onclick="openRememberModal()">+ New Question</button>
+        </div>
+        <div id="rememberList" class="card-grid flash-grid"></div>
+      </section>
+
+      <!-- DIARY -->
+      <section id="view-diary" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Diary</h1>
+            <p class="view-sub">A running log of your learning journey.</p>
+          </div>
+          <button class="btn-primary" onclick="openDiaryModal()">+ New Entry</button>
+        </div>
+        <div id="diaryList" class="timeline-container"></div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="view-tasks" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Tasks</h1>
+            <p class="view-sub">Everything you need to get done.</p>
+          </div>
+          <button class="btn-primary" onclick="openTaskModal()">+ New Task</button>
+        </div>
+        <div class="filter-bar" id="taskFilters">
+          <button class="filter-btn active" data-filter="All" onclick="setTaskFilter('All')">All</button>
+          <button class="filter-btn" data-filter="Pending" onclick="setTaskFilter('Pending')">Pending</button>
+          <button class="filter-btn" data-filter="In Progress" onclick="setTaskFilter('In Progress')">In Progress</button>
+          <button class="filter-btn" data-filter="Completed" onclick="setTaskFilter('Completed')">Completed</button>
+        </div>
+        <div id="tasksList" class="card-grid"></div>
+      </section>
+
+      <!-- PROGRESS / GOALS -->
+      <section id="view-goals" class="view">
+        <div class="view-head">
+          <div>
+            <h1>Progress</h1>
+            <p class="view-sub">Goals you're tracking toward a target.</p>
+          </div>
+          <button class="btn-primary" onclick="openGoalModal()">+ New Goal</button>
+        </div>
+        <div id="goalsList" class="card-grid"></div>
+      </section>
+
+      <!-- CUSTOM MODULES -->
+      <section id="view-custom" class="view">
+        <div id="customList-wrap">
+          <div class="view-head">
+            <div>
+              <h1>Custom Modules</h1>
+              <p class="view-sub">Build your own structure with free-form items.</p>
+            </div>
+            <button class="btn-primary" onclick="createModule()">+ Create Module</button>
+          </div>
+          <div id="modulesContainer" class="card-grid"></div>
+        </div>
+        <div id="moduleDetail" class="detail-view" style="display:none;"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- GENERIC FORM MODAL -->
+<div id="formModal" class="modal">
+  <div class="modal-content">
+    <h2 id="formModalTitle">Add Item</h2>
+    <div id="formModalBody"></div>
+    <div class="modal-buttons">
+      <button class="btn-primary" onclick="submitFormModal()">Save</button>
+      <button onclick="closeFormModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT FILES -->
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/roadmaps.js"></script>
+<script src="js/checklists.js"></script>
+<script src="js/topics.js"></script>
+<script src="js/remember.js"></script>
+<script src="js/diary.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/goals.js"></script>
+<script src="js/modules.js"></script>
+</body>
+</html>
