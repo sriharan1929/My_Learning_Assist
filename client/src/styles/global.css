@@ -269,6 +269,7 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 700; color: v
 
 /* Grids and Cards */
 .section-grid { display: grid; gap: 18px; }
+.section-grid-five { grid-template-columns: repeat(5, 1fr); }
 .section-grid-four { grid-template-columns: repeat(4, 1fr); }
 .section-grid-three { grid-template-columns: repeat(3, 1fr); }
 .section-grid-two { grid-template-columns: repeat(2, 1fr); }
@@ -485,6 +486,7 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 700; color: v
 
 /* Media Queries */
 @media (max-width: 1150px) {
+  .section-grid-five { grid-template-columns: repeat(3, 1fr); }
   .section-grid-four { grid-template-columns: repeat(2,1fr); }
   .section-grid-three { grid-template-columns: repeat(2,1fr); }
 }
@@ -502,7 +504,7 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 700; color: v
 }
 
 @media (max-width: 650px) {
-  .section-grid-four, .section-grid-three, .section-grid-two { grid-template-columns: 1fr; }
+  .section-grid-five, .section-grid-four, .section-grid-three, .section-grid-two { grid-template-columns: 1fr; }
   .page-header { align-items: flex-start; flex-direction: column; }
   .page-action, .page-action .button { width: 100%; }
   .form-grid { grid-template-columns: 1fr; }

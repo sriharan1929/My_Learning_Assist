@@ -24,24 +24,27 @@ This report summarizes the current implementation status of the MERN stack rebui
 - **Dynamic Database Warning**: Bottom sidebar warning dynamically displays if the backend is running in-memory or on a live database.
 
 ### Core Testing Suite
-- 4 backend Vitest integration tests (CRUD validation, auth, metrics).
+- 8 backend Vitest integration and unit tests (covering CRUD validation, auth, metrics, MongoRepository, and async controllers).
 - 5 frontend UI testing library tests (login form, progress bar rendering, steps expansion, checkbox toggling, step additions).
+
+### MERN Database & Multi-User Integration
+- **Database Connection Handler**: Successfully connects to MongoDB via `mongoose.connect()` when `MONGODB_URI` is supplied.
+- **`MongoRepository.all()` Method**: Fully implemented in `MongoRepository` to prevent server errors and support dashboard/global search query flows.
+- **Asynchronous Controllers & Service Layer**: Refactored the dashboard/search endpoints and service methods to run asynchronously with parallel query resolution (`Promise.all()`).
+- **Sub-Resource Schema Validation**: Wired up Zod body input validation middleware (`validate(schema)`) on nested sub-resource controllers (`POST` and `PUT` for steps/items).
+- **Permanent Registrations (Multi-User Support)**: Implemented full user registration/signup, password hashing with `bcryptjs`, and dynamic user database authentication.
 
 ---
 
 ## 2. Pending Items (To Be Completed) ⏳
 
-- **Database Connection Handler**: `server.js` currently uses `MemoryRepository` by default. Connection initiation via `mongoose.connect()` when `MONGODB_URI` is supplied needs to be written.
-- **`MongoRepository.all()` Method**: The dashboard and global search search routes call `repository.all(name, userId)`. This method must be added to `MongoRepository` to prevent server errors when database storage is active.
-- **Asynchronous Dashboard Controller**: `insight-controller.js` runs data gathering synchronously. It must be refactored to be `async` and resolve MongoDB queries with `Promise.all()` to support async database queries.
-- **Sub-Resource Schema Validation**: The body input validation middleware (`validate(schema)`) is not hooked up on nested sub-resource controllers (`POST` and `PUT` for steps/items).
+- **None**: All core rebuild items are completed.
 
 ---
 
 ## 3. Recommended Enhancements & Future Additions 🚀
 
 ### Feature Expansion
-- **Permanent Registrations**: Expand from the single-user hardcoded token profile to a full multi-tenant user table, password encryption (bcrypt), and account creation signup views.
 - **Calendar Widget**: A calendar matrix page to map due dates, scheduled topics, and focus sessions.
 - **Habit Streaks**: Add tracker tallies for continuous days completing study sessions or checklist tasks.
 - **Visual Analytics**: Interactive bar and line charts (e.g., using Recharts) detailing study hours grouped by topic over week/month periods.

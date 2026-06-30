@@ -1,4 +1,4 @@
-import { Check, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { Check, ExternalLink, Pencil, Trash2, FileText, FileImage, File } from "lucide-react";
 import { useState } from "react";
 import { formatDate, getProgress } from "../../lib/utils.js";
 import { Button } from "../../components/ui/button.jsx";
@@ -34,6 +34,45 @@ export function ResourceCard({ item, name, onEdit, onDelete, flipped, onFlip, ad
     <p className="card-copy">{item.content || item.description || item.notes || item.mood || "Ready when you are."}</p>
     <div className="meta-row">{item.status && <StatusBadge value={item.status} />}{item.priority && <PriorityBadge value={item.priority} />}{item.type && <span>{item.type}</span>}{item.dueDate && <span>Due {formatDate(item.dueDate)}</span>}{item.plannedDate && <span>{formatDate(item.plannedDate)} · {item.duration} min</span>}{item.deadline && <span>Target {formatDate(item.deadline)}</span>}</div>
     {(item.steps || item.items || item.target) && <><ProgressBar value={progress} /><div className="meta-row"><span>{progress}% complete</span>{item.target && <span>{item.current} / {item.target} {item.unit}</span>}{item.steps && <span>{item.steps.length} steps</span>}{item.items && <span>{item.items.length} items</span>}</div></>}
+    {item.attachments && item.attachments.length > 0 && (
+      <div style={{ marginTop: "12px", borderTop: "1px dashed var(--border)", paddingTop: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <span style={{ fontSize: "0.75rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--walnut-brown)" }}>Attachments</span>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {item.attachments.map((file, idx) => {
+            const isImage = file.type?.startsWith("image/");
+            const Icon = isImage ? FileImage : file.type?.includes("pdf") ? FileText : File;
+            return (
+              <a
+                key={idx}
+                href={file.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "4px 8px",
+                  borderRadius: "6px",
+                  background: "var(--surface-soft)",
+                  border: "1px solid var(--border)",
+                  fontSize: "0.78rem",
+                  color: "var(--deep-forest-brown)",
+                  textDecoration: "none",
+                  maxWidth: "100%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+                className="attachment-link"
+              >
+                <Icon size={13} style={{ color: "var(--clay-brown)", flexShrink: 0 }} />
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{file.name}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
     <div className="card-actions">
       {item.url && <Button variant="secondary" size="small" onClick={() => window.open(item.url, "_blank", "noopener")}><ExternalLink size={14} />Open</Button>}
       {hasSubItems && (

@@ -17,6 +17,7 @@ export class MongoRepository extends BaseRepository {
     return { items, total, page: query.page, limit: query.limit };
   }
 
+  all(name, userId) { return this.models[name].find({ userId }).lean(); }
   get(name, id, userId) { return this.models[name].findOne({ _id: id, userId }).lean(); }
   create(name, values, userId) { return this.models[name].create({ ...values, userId }); }
   update(name, id, values, userId) { return this.models[name].findOneAndUpdate({ _id: id, userId }, values, { new: true, runValidators: true }).lean(); }

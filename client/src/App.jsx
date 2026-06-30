@@ -7,6 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => { const load = async () => { if (!localStorage.getItem("learningOsToken")) return setLoading(false); try { setUser((await api.get("/auth/me")).data); } finally { setLoading(false); } }; load(); const expired = () => setUser(null); window.addEventListener("learning-os-auth-expired", expired); return () => window.removeEventListener("learning-os-auth-expired", expired); }, []);
   const login = async values => { const data = (await api.post("/auth/login", values)).data; localStorage.setItem("learningOsToken", data.token); setUser(data.user); };
+  const register = async values => { const data = (await api.post("/auth/register", values)).data; localStorage.setItem("learningOsToken", data.token); setUser(data.user); };
   const logout = async () => { try { await api.post("/auth/logout"); } finally { localStorage.removeItem("learningOsToken"); setUser(null); } };
-  return <AppRoutes user={user} loading={loading} onLogin={login} onLogout={logout} />;
+  return <AppRoutes user={user} loading={loading} onLogin={login} onRegister={register} onLogout={logout} />;
 }
