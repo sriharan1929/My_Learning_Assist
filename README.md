@@ -6,10 +6,15 @@ My Learning OS is a full-stack MERN application that brings together notes, road
 
 ---
 
-## What It Does
+## Key Features
 
 My Learning OS is a personal learning management system that helps you organize, track, and reflect on everything you learn. Instead of juggling browser tabs, sticky notes, and spreadsheets, you get one unified workspace with:
 
+- **Focus Timer (Enhanced)** — A Pomodoro-style deep work timer with preset durations (15/25/45/60 min) that automatically records completed sessions to your study history. Features a dynamic SVG-based circular progress ring, browser-synthesized ambient soundscapes (Soft Rain, Forest Wind, Deep Brown, Zen Tick), and an endpoint-triggered Zen Chime.
+- **Calendar** — A visual calendar matrix page mapping tasks, goals, and study sessions directly to their due dates, scheduled times, or completion dates for timeline-based tracking.
+- **Analytics Dashboard** — Interactive Recharts visualization tracking study hours by date, topic distribution, task/goal completion metrics, and consecutive study streaks.
+- **Media Attachments** — Secure file upload and attachments support for Resources, Roadmaps, and Goals, allowing users to upload and view reference documents, PDFs, and images.
+- **Multi-User Registrations** — Complete user authentication flow supporting both registration of new user accounts (with bcryptjs password hashing) and secure JWT-based sign-in.
 - **Notes** — Capture ideas, summaries, and insights with tags and pinning.
 - **Roadmaps** — Break learning goals into sequential steps. Check off milestones as you progress through a topic.
 - **Checklists** — Create actionable item lists with inline completion tracking.
@@ -18,10 +23,6 @@ My Learning OS is a personal learning management system that helps you organize,
 - **Goals** — Set measurable targets with progress tracking (e.g., "Read 12 books this year — 4/12").
 - **Diary** — Reflect on your learning journey with mood tracking and daily entries.
 - **Resources** — Bookmark articles, videos, courses, and tools with quick-open links.
-- **Study Sessions** — Log focused study time by topic and duration.
-- **Custom Modules** — Create your own resource types with flexible items, statuses, and priority levels.
-- **Focus Timer** — A Pomodoro-style deep work timer with preset durations (15/25/45/60 min) that automatically records completed sessions to your study history.
-- **Dashboard** — A unified overview showing active goals, today's schedule, completion metrics, and recent activity at a glance.
 - **Global Search** — Search across every resource type instantly. Click a result to jump directly to that item's edit view.
 
 ---
@@ -51,7 +52,7 @@ The interface follows an **Organic Earth-Tone Design System** inspired by Scandi
 
 ---
 
-## Architecture
+## Architecture Overview
 
 ```
 my-learning-os/
@@ -82,12 +83,6 @@ my-learning-os/
 └── package.json               # npm workspaces root
 ```
 
-**Key technologies:**
-- **Frontend:** React 19, Vite, React Router 7, TanStack Query, React Hook Form, Zod, Lucide Icons
-- **Backend:** Express, JWT authentication, Zod validation, Helmet, CORS, Rate Limiting
-- **Data layer:** Repository pattern with swappable `MemoryRepository` (default) and `MongoRepository` (production)
-- **Testing:** Vitest, Supertest, React Testing Library
-
 ---
 
 ## Getting Started
@@ -95,27 +90,50 @@ my-learning-os/
 ### Prerequisites
 - Node.js 18+
 - npm 9+
+- MongoDB instance (running locally or in the cloud)
 
 ### Installation
 
+1. Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/your-username/TMS_Learning-main.git
 cd TMS_Learning-main
 npm install
+```
+
+2. Create the `.env` configuration for the server:
+```bash
 copy server\.env.example server\.env
 ```
 
+3. Ensure MongoDB is running and update your `server/.env` if necessary (see Database Configuration).
+
 ### Run Locally
 
+Start the React client and Express API concurrently:
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) and sign in with:
+Open [http://localhost:5173](http://localhost:5173) in your browser. 
+
+You can immediately sign in with the default demo user:
 - **Email:** `demo@learningos.dev`
 - **Password:** `learn123`
 
-The API runs on `http://localhost:4000` and uses in-memory demo data by default. Data resets when the server restarts.
+Or register a new account from the Sign Up page.
+
+---
+
+## Database Configuration
+
+By default, the server is configured to connect to a MongoDB instance using the `MONGODB_URI` environment variable defined in `server/.env`:
+
+```env
+MONGODB_URI=mongodb://localhost:27017/learning-os
+```
+
+If `MONGODB_URI` is omitted or empty, the server automatically falls back to an **in-memory data repository**. In-memory mode is ideal for local development, testing, and isolated demo environments since all data resets when the server restarts.
 
 ---
 
@@ -130,44 +148,9 @@ The API runs on `http://localhost:4000` and uses in-memory demo data by default.
 
 ---
 
-## Demo Authentication
+## Developer Guide
 
-The application ships with a single demo user for immediate exploration. No registration required:
-
-| Field    | Value                 |
-|----------|-----------------------|
-| Email    | `demo@learningos.dev` |
-| Password | `learn123`            |
-
-Authentication uses JWT tokens stored in `localStorage`. All API routes except `/auth/login` are protected.
-
----
-
-## Database Configuration
-
-By default, the server uses an **in-memory repository** — all data lives in JavaScript arrays and resets on restart. This is ideal for demos and development.
-
-To switch to persistent MongoDB storage, add `MONGODB_URI` to your `server/.env`:
-
-```env
-MONGODB_URI=mongodb://localhost:27017/learning-os
-```
-
-> **Note:** The MongoDB connection handler and `MongoRepository.all()` method are prepared but require final wiring. See `rebuild_status_report.md` for details.
-
----
-
-## Future Ideas
-
-- Calendar planning and scheduling views
-- Habit tracking with daily streaks
-- Visual analytics with charts (Recharts)
-- Dark sanctuary mode (warm chocolate tones)
-- Rich text / Markdown editor for notes
-- File and media attachments
-- Multi-user registration and collaboration
-- Achievement badges and milestones
-- Production MongoDB deployment
+For a detailed file-by-file breakdown of the system architecture, dependencies, project flows, and backend schemas, see the [Architecture & Developer Guide (ARCHITECTURE.md)](file:///c:/Users/Sriharan/Documents/My_Learning_Assist/ARCHITECTURE.md).
 
 ---
 
