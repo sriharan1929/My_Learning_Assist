@@ -129,7 +129,7 @@ export function CalendarPage() {
         description="Track your task deadlines, roadmap progress goals, and upcoming focus study sessions."
       />
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr .6fr", gap: "24px" }} className="split-content">
+      <div className="split-content">
         <DataCard>
           {/* Calendar Header Nav */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -198,24 +198,39 @@ export function CalendarPage() {
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginTop: "4px" }}>
                     {dayEvents.tasks.slice(0, 2).map((t, i) => (
-                      <div key={i} style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(117, 89, 73, 0.1)", color: "var(--deep-forest-brown)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div key={i} className="calendar-event-text" style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(117, 89, 73, 0.1)", color: "var(--deep-forest-brown)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         t: {t.title}
                       </div>
                     ))}
                     {dayEvents.goals.slice(0, 1).map((g, i) => (
-                      <div key={i} style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(161, 119, 93, 0.15)", color: "var(--deep-forest-brown)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div key={i} className="calendar-event-text" style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(161, 119, 93, 0.15)", color: "var(--deep-forest-brown)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         g: {g.title}
                       </div>
                     ))}
                     {dayEvents.sessions.slice(0, 1).map((s, i) => (
-                      <div key={i} style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(164, 155, 114, 0.18)", color: "var(--olive-green)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div key={i} className="calendar-event-text" style={{ fontSize: "0.68rem", padding: "2px 6px", borderRadius: "4px", background: "rgba(164, 155, 114, 0.18)", color: "var(--olive-green)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         f: {s.title}
                       </div>
                     ))}
                     {dayEvents.total > 3 && (
-                      <span style={{ fontSize: "0.6rem", color: "var(--muted)", textAlign: "right" }}>
+                      <span className="calendar-event-text" style={{ fontSize: "0.6rem", color: "var(--muted)", textAlign: "right" }}>
                         +{dayEvents.total - 3} more
                       </span>
+                    )}
+
+                    {/* Mobile/Tablet Dots Indicator View */}
+                    {dayEvents.total > 0 && (
+                      <div className="calendar-event-dots-container">
+                        {dayEvents.tasks.map((_, i) => (
+                          <span key={i} className="calendar-event-dot task" title="Task" />
+                        ))}
+                        {dayEvents.goals.map((_, i) => (
+                          <span key={i} className="calendar-event-dot goal" title="Goal" />
+                        ))}
+                        {dayEvents.sessions.map((_, i) => (
+                          <span key={i} className="calendar-event-dot session" title="Focus Session" />
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>

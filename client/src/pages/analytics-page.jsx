@@ -86,7 +86,7 @@ export function AnalyticsPage() {
       </SectionGrid>
 
       {/* Main Charts Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", marginTop: "18px" }} className="dashboard-grid">
+      <div className="section-grid section-grid-two" style={{ marginTop: "18px" }}>
         <DataCard>
           <div style={{ marginBottom: "16px" }}>
             <h3 style={{ margin: 0, fontFamily: "Fraunces", fontSize: "1.25rem", color: "var(--deep-forest-brown)" }}>Study Consistency (Last 14 Days)</h3>
