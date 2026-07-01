@@ -1,0 +1,11 @@
+{
+  "name": "@learning-os/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  }
+}
