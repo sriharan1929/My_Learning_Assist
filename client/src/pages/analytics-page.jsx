@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid } from "recharts";
-import { Flame, Trophy, Clock, Calendar, CheckSquare } from "lucide-react";
+import { Flame, Trophy, Clock, CheckSquare } from "lucide-react";
 import { api } from "../services/api.js";
 import { PageHeader } from "../components/common/page-header.jsx";
 import { LoadingState, ErrorState } from "../components/common/states.jsx";
