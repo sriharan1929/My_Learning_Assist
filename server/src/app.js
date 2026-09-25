@@ -1,3 +1,4 @@
+import fs from "fs";
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -26,9 +27,20 @@ export function createApp(customRepository) {
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   if (env.NODE_ENV !== "test") app.use(morgan("dev"));
   app.use("/api/v1", rateLimit({ windowMs: 60000, limit: 200, standardHeaders: "draft-7" }), makeRoutes(service, repository));
+
+  const clientDistPath = path.join(__dirname, "../../client/dist");
+  if (fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+    app.get("*", (req, res, next) => {
+      if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) return next();
+      res.sendFile(path.join(clientDistPath, "index.html"));
+    });
+  }
+
   app.use(notFound);
   app.use(errorHandler);
   return app;
 }
+
 
 export const app = createApp();

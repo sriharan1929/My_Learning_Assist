@@ -1,5 +1,5 @@
 import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "../components/ui/button.jsx";
 import { DataCard } from "../components/common/data-card.jsx";
@@ -20,7 +20,26 @@ export function FocusPage() {
   const lfoRef = useRef(null);
   const gainNodeRef = useRef(null);
 
-  const startSoundscape = (type) => {
+  const stopSoundscape = useCallback(() => {
+    if (soundSourceRef.current) {
+      try {
+        soundSourceRef.current.stop();
+      } catch {
+        // ignore stop error
+      }
+      soundSourceRef.current = null;
+    }
+    if (lfoRef.current) {
+      try {
+        lfoRef.current.stop();
+      } catch {
+        // ignore stop error
+      }
+      lfoRef.current = null;
+    }
+  }, []);
+
+  const startSoundscape = useCallback((type) => {
     if (type === "none" || type === "tick") {
       stopSoundscape();
       return;
@@ -101,22 +120,7 @@ export function FocusPage() {
     } catch (e) {
       console.error("Web Audio API error:", e);
     }
-  };
-
-  const stopSoundscape = () => {
-    if (soundSourceRef.current) {
-      try {
-        soundSourceRef.current.stop();
-      } catch (e) {}
-      soundSourceRef.current = null;
-    }
-    if (lfoRef.current) {
-      try {
-        lfoRef.current.stop();
-      } catch (e) {}
-      lfoRef.current = null;
-    }
-  };
+  }, [stopSoundscape]);
 
   const playTickSound = () => {
     try {
@@ -189,7 +193,7 @@ export function FocusPage() {
       stopSoundscape();
     }
     return () => stopSoundscape();
-  }, [running, soundscape]);
+  }, [running, soundscape, startSoundscape, stopSoundscape]);
 
   // Main countdown timer
   useEffect(() => {
