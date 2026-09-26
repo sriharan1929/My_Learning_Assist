@@ -26,11 +26,11 @@ export function createApp(customRepository) {
   // Support multiple comma-separated origins in CLIENT_URL (e.g. Vercel URL + localhost)
   const allowedOrigins = env.CLIENT_URL
     ? env.CLIENT_URL.split(",").map(u => u.trim())
-    : ["http://localhost:5173"];
+    : ["http://localhost:5173", "https://my-learning-assist-client.vercel.app"];
   app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, same-origin server requests)
-      if (!origin || allowedOrigins.some(o => o === "*" || o === origin)) {
+      // Allow requests with no origin (mobile apps, curl) or any vercel.app / localhost origins
+      if (!origin || origin.includes("vercel.app") || origin.includes("localhost") || allowedOrigins.some(o => o === "*" || o === origin)) {
         return callback(null, true);
       }
       callback(null, false);
@@ -39,6 +39,9 @@ export function createApp(customRepository) {
   }));
 
   app.use(express.json({ limit: "1mb" }));
+
+  app.get("/health", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
+  app.get("/api/v1/health", (req, res) => res.json({ status: "ok", mode: repository.constructor.name === "MongoRepository" ? "mongo" : "memory", timestamp: new Date().toISOString() }));
 
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   if (env.NODE_ENV !== "test") app.use(morgan("dev"));
