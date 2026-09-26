@@ -20,6 +20,7 @@ export function createApp(customRepository) {
   const repository = customRepository || new MemoryRepository(seed);
   const service = new ResourceService(repository);
   const app = express();
+  app.set("trust proxy", 1);
   app.disable("x-powered-by");
   app.use(helmet({ crossOriginResourcePolicy: false }));
 

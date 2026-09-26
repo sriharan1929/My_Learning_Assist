@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { env } from "../config/env.js";
@@ -6,12 +7,14 @@ import { HttpError } from "../utils/http-error.js";
 import { sendData } from "../utils/response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
-const currentUser = { id: "demo-user", name: "Alex Morgan", email: env.DEMO_EMAIL, role: "Learner", isDemo: !env.MONGODB_URI };
+const isMongoConnected = () => mongoose.connection.readyState === 1;
+
+const currentUser = { id: "demo-user", name: "Alex Morgan", email: env.DEMO_EMAIL, role: "Learner", isDemo: true };
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  if (!env.MONGODB_URI) {
+  if (!isMongoConnected()) {
     if (email !== env.DEMO_EMAIL || password !== env.DEMO_PASSWORD) {
       throw new HttpError(401, "Email or password is incorrect");
     }
@@ -33,7 +36,7 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const me = asyncHandler(async (req, res) => {
-  if (!env.MONGODB_URI) {
+  if (!isMongoConnected()) {
     return sendData(res, currentUser);
   }
 
@@ -52,8 +55,8 @@ export const me = asyncHandler(async (req, res) => {
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!env.MONGODB_URI) {
-    throw new HttpError(400, "Registration is not supported in demo memory mode");
+  if (!isMongoConnected()) {
+    throw new HttpError(400, "Registration requires MongoDB connection. Please use demo login or configure database.");
   }
 
   const existing = await models.users.findOne({ email: email.toLowerCase() });
