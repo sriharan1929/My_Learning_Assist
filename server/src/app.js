@@ -22,8 +22,24 @@ export function createApp(customRepository) {
   const app = express();
   app.disable("x-powered-by");
   app.use(helmet({ crossOriginResourcePolicy: false }));
-  app.use(cors({ origin: env.CLIENT_URL }));
+
+  // Support multiple comma-separated origins in CLIENT_URL (e.g. Vercel URL + localhost)
+  const allowedOrigins = env.CLIENT_URL
+    ? env.CLIENT_URL.split(",").map(u => u.trim())
+    : ["http://localhost:5173"];
+  app.use(cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, same-origin server requests)
+      if (!origin || allowedOrigins.some(o => o === "*" || o === origin)) {
+        return callback(null, true);
+      }
+      callback(null, false);
+    },
+    credentials: true
+  }));
+
   app.use(express.json({ limit: "1mb" }));
+
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   if (env.NODE_ENV !== "test") app.use(morgan("dev"));
   app.use("/api/v1", rateLimit({ windowMs: 60000, limit: 200, standardHeaders: "draft-7" }), makeRoutes(service, repository));

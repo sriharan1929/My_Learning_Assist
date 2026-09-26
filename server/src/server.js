@@ -6,30 +6,39 @@ import { models } from "./models/index.js";
 import { MongoRepository } from "./repositories/mongo-repository.js";
 
 let repository;
-if (env.MONGODB_URI) {
-  console.log("Connecting to MongoDB...");
-  await mongoose.connect(env.MONGODB_URI);
-  console.log("Connected to MongoDB successfully.");
-  repository = new MongoRepository(models);
 
+if (env.MONGODB_URI) {
   try {
-    const demoUser = await models.users.findOne({ email: env.DEMO_EMAIL });
-    if (!demoUser) {
-      console.log("Seeding demo user into MongoDB...");
-      const hashedPassword = await bcrypt.hash(env.DEMO_PASSWORD, 10);
-      await models.users.create({
-        _id: "demo-user",
-        name: "Alex Morgan",
-        email: env.DEMO_EMAIL.toLowerCase(),
-        password: hashedPassword,
-        role: "Learner"
-      });
-      console.log("Demo user seeded successfully.");
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(env.MONGODB_URI, { serverSelectionTimeoutMS: 8000 });
+    console.log("Connected to MongoDB successfully.");
+    repository = new MongoRepository(models);
+
+    try {
+      const demoUser = await models.users.findOne({ email: env.DEMO_EMAIL });
+      if (!demoUser) {
+        console.log("Seeding demo user into MongoDB...");
+        const hashedPassword = await bcrypt.hash(env.DEMO_PASSWORD, 10);
+        await models.users.create({
+          _id: "demo-user",
+          name: "Alex Morgan",
+          email: env.DEMO_EMAIL.toLowerCase(),
+          password: hashedPassword,
+          role: "Learner"
+        });
+        console.log("Demo user seeded successfully.");
+      }
+    } catch (seedErr) {
+      console.error("Warning: Failed to seed demo user:", seedErr.message);
     }
   } catch (err) {
-    console.error("Warning: Failed to seed demo user:", err);
+    console.error("Warning: MongoDB connection failed, falling back to in-memory mode.", err.message);
+    repository = undefined; // will use MemoryRepository in createApp
   }
+} else {
+  console.log("No MONGODB_URI set — using in-memory data store.");
 }
+
 
 const app = createApp(repository);
 
