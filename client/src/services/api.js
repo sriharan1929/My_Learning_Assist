@@ -1,6 +1,10 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: "/api/v1" });
+const apiBase = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api/v1`
+  : "/api/v1";
+
+export const api = axios.create({ baseURL: apiBase });
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem("learningOsToken");
