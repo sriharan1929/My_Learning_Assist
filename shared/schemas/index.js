@@ -3,8 +3,12 @@ import { priorities, resourceTypes, sessionStatuses, taskStatuses, topicStatuses
 
 const text = z.string().trim();
 const title = text.min(1, "Title is required").max(160);
-const tags = z.array(text.min(1)).default([]);
-const date = z.string().default("");
+const tags = z.preprocess(val => {
+  if (Array.isArray(val)) return val.map(t => String(t).trim()).filter(Boolean);
+  if (typeof val === "string") return val.split(",").map(t => t.trim()).filter(Boolean);
+  return [];
+}, z.array(z.string()).default([]));
+const date = z.preprocess(val => val ?? "", z.string().default(""));
 
 const attachmentSchema = z.object({
   name: z.string().trim().min(1),
@@ -12,6 +16,7 @@ const attachmentSchema = z.object({
   type: z.string().trim().default(""),
   size: z.number().optional()
 });
+const attachments = z.preprocess(val => Array.isArray(val) ? val : [], z.array(attachmentSchema).default([]));
 
 export const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -33,9 +38,9 @@ export const schemas = {
   remember: z.object({ question: title, answer: text.min(1, "Answer is required"), tags, confidence: z.coerce.number().min(1).max(5).default(1) }),
   diary: z.object({ title, content: text.default(""), mood: text.default("Focused"), entryDate: date }),
   tasks: z.object({ title, description: text.default(""), status: z.enum(taskStatuses).default("Pending"), priority: z.enum(priorities).default("Medium"), dueDate: date, tags }),
-  goals: z.object({ title, current: z.coerce.number().min(0).default(0), target: z.coerce.number().positive(), unit: text.default(""), deadline: date, attachments: z.array(attachmentSchema).default([]) }),
+  goals: z.object({ title, current: z.coerce.number().min(0).default(0), target: z.coerce.number().positive(), unit: text.default(""), deadline: date, attachments }),
   customModules: z.object({ name: title, items: z.array(z.object({ id: z.string(), title, description: text.default(""), status: z.enum(taskStatuses).default("Pending"), priority: z.enum(priorities).default("Medium") })).default([]) }),
-  resources: z.object({ title, url: z.string().url("Enter a valid URL"), type: z.enum(resourceTypes).default("Article"), topic: text.default(""), tags, completed: z.boolean().default(false), attachments: z.array(attachmentSchema).default([]) }),
+  resources: z.object({ title, url: z.string().url("Enter a valid URL"), type: z.enum(resourceTypes).default("Article"), topic: text.default(""), tags, completed: z.boolean().default(false), attachments }),
   studySessions: z.object({ title, topic: text.default(""), plannedDate: date, duration: z.coerce.number().int().positive().max(600), notes: text.default(""), status: z.enum(sessionStatuses).default("Planned") })
 };
 
