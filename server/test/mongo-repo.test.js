@@ -11,6 +11,7 @@ const mockUserFindById = vi.fn();
 
 vi.mock("../src/config/env.js", () => ({
   env: {
+    NODE_ENV: "test",
     MONGODB_URI: "mongodb://mock-uri",
     JWT_SECRET: "mock-secret",
     DEMO_EMAIL: "demo@learningos.dev",

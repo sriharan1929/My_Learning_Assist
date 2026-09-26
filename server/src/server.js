@@ -15,12 +15,11 @@ if (env.MONGODB_URI) {
     repository = new MongoRepository(models);
 
     try {
-      const demoUser = await models.users.findOne({ email: env.DEMO_EMAIL });
+      const demoUser = await models.users.findOne({ email: env.DEMO_EMAIL.toLowerCase() });
       if (!demoUser) {
         console.log("Seeding demo user into MongoDB...");
         const hashedPassword = await bcrypt.hash(env.DEMO_PASSWORD, 10);
         await models.users.create({
-          _id: "demo-user",
           name: "Alex Morgan",
           email: env.DEMO_EMAIL.toLowerCase(),
           password: hashedPassword,

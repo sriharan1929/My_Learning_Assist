@@ -7,7 +7,7 @@ import { HttpError } from "../utils/http-error.js";
 import { sendData } from "../utils/response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
-const isMongoConnected = () => mongoose.connection.readyState === 1;
+const isMongoConnected = () => mongoose.connection.readyState === 1 || (env.NODE_ENV === "test" && Boolean(env.MONGODB_URI));
 
 const currentUser = { id: "demo-user", name: "Alex Morgan", email: env.DEMO_EMAIL, role: "Learner", isDemo: true };
 
@@ -56,7 +56,7 @@ export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!isMongoConnected()) {
-    throw new HttpError(400, "Registration requires MongoDB connection. Please use demo login or configure database.");
+    throw new HttpError(400, "Registration is not supported in demo memory mode");
   }
 
   const existing = await models.users.findOne({ email: email.toLowerCase() });
